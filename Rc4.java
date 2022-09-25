@@ -1,3 +1,9 @@
+/* 
+ * @Autor Najera Noyola Karla Andrea
+ * @Fecha 25 de septiembre de 2022
+ * @Descripción Clase que permite el cifrado/descifrado mediante RC4.
+*/
+
 public class Rc4 {
     int[] S;            // Arreglo de 256 posiciones
     int [] keystream;   // Keystream generado en el algoritmo
@@ -31,6 +37,7 @@ public class Rc4 {
         int j=0, aux=0;
         for(int i=0; i<256; i++){
             j=(j+S[i]+key.charAt(i%longKey))%256;
+            // Swap
             aux=S[i];
             S[i]=S[j];
             S[j]=aux;
@@ -50,6 +57,7 @@ public class Rc4 {
         while(k<longTexto){
             i=((i+1)%256);
             j=((j+S[i])%256);
+            // Swap
             aux=S[i];
             S[i]=S[j];
             S[j]=aux;
@@ -59,21 +67,37 @@ public class Rc4 {
         }      
     }
 
+    /*
+     * Función que realiza el proceso de encriptación
+     * Tras la creación del objeto Rc4, se le llama a la función
+     *  y realiza todos los pasos que permiten la encriptación 
+     *  del texto. 
+     * Trabaja a partir de los valores de la instancia. 
+     */
     public String encriptar(){
         int longTexto=texto.length();
+        // Transformación de texto a decimales ASCII
         int[] ascii = new int[longTexto];
         for(int i=0; i<longTexto; i++){
             ascii[i]=texto.charAt(i);
         }
+
+        // Key-scheduling algorithm
         ksa();
+
+        // Pseudo-Random Generation ALgorithm
         prga(longTexto);
-        //XOR entre el keystream y el texto plano
+
+        
         int[] operXor= new int[longTexto];
+        // XOR entre el keystream y el texto en decimales ASCII
         for(int i=0; i<longTexto; i++){
             operXor[i]=(ascii[i]^keystream[i]);
         }
+
         String mensaje="";
         String hex="";
+        // Conversión a valores hexadecimales
         for(int i=0; i<longTexto; i++){
             hex=Integer.toHexString(operXor[i]);
             if(hex.length()==1){
@@ -82,29 +106,43 @@ public class Rc4 {
             hex=hex.toUpperCase();
             mensaje+= hex;
         }
+
+        // Se devuelve el mensaje cifrado
         return mensaje;
     }
 
     public String desencriptar(){
-        String mensaje="";
-        int longTexto=texto.length();
+        // En todos los casos, salvo en la conversión de caracteres,
+        // longTexto debe ser la mitad debido a que la cadena encriptada
+        // tiene los valores en hexadecimal y ocupan 2 posiciones c/u. 
+        int longTexto=texto.length()/2;
         int[] ascii = new int[longTexto];
         int aux=0;
-        for(int i=0; i<longTexto; i+=2){
+        // Conversión de subcadenas hexadecimales a enteros
+        for(int i=0; i<longTexto*2; i+=2){
             ascii[aux]=(Integer.parseInt(texto.substring(i, i+2),16));
             aux++;
         }
+        
+        // Key-Scheduling Algorithm
         ksa();
-        prga(longTexto/2);
+
+        // Pseudo-Random Generation ALgorithm
+        prga(longTexto);
+
 
         int[] operXor= new int[keystream.length];
+        // XOR entre el keystream y el texto en decimales ASCII
         for(int i=0; i<keystream.length; i++){
             operXor[i]=(ascii[i]^keystream[i]);
         }
-        
+
+        String mensaje="";
+        // Conversión a carácteres
         for(int i=0; i<operXor.length; i++){
             mensaje+=(char)operXor[i];
         }
+        // Se devuelve el mensaje descifrado
         return mensaje;
     }
 }
