@@ -1,2 +1,10 @@
-# Practica2Cripto
-Práctica 2 de Criptografía
+# Segunda práctica de Criptografía
+## RC4
+## Semestre 2023-1
+
+### Alumna:
+- Najera Noyola Karla Andrea
+
+### Contenido
+- PDF con la redacción de la práctica
+- Archivos de clases de Java para implementación de la práctica
